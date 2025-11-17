@@ -78,7 +78,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "(LOWER(a.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(a.content) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(a.summary) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
-            "a.status = 'PUBLISHED'")
+            "a.status = 'DRAFT'")
     Page<Article> searchArticles(@Param("keyword") String keyword, Pageable pageable);
 
     /**
@@ -89,7 +89,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "LOWER(a.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(a.content) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
             "(:author IS NULL OR LOWER(a.author.username) LIKE LOWER(CONCAT('%', :author, '%'))) AND " +
-            "a.status = 'PUBLISHED'")
+            "a.status = 'DRAFT'")
     Page<Article> advancedSearch(@Param("keyword") String keyword,
                                  @Param("author") String author,
                                  Pageable pageable);
@@ -105,13 +105,13 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     /**
      * 查找热门文章（按浏览量排序）
      */
-    @Query("SELECT a FROM Article a WHERE a.status = 'PUBLISHED' ORDER BY a.viewCount DESC")
+    @Query("SELECT a FROM Article a WHERE a.status = 'DRAFT' ORDER BY a.viewCount DESC")
     List<Article> findPopularArticles(@Param("limit") int limit, Pageable pageable);
 
     /**
      * 查找热门文章（限制数量）
      */
-    @Query(value = "SELECT a FROM Article a WHERE a.status = 'PUBLISHED' ORDER BY a.viewCount DESC")
+    @Query(value = "SELECT a FROM Article a WHERE a.status = 'DRAFT' ORDER BY a.viewCount DESC")
     List<Article> findPopularArticles(Pageable pageable);
 
     default List<Article> findPopularArticles(int limit) {
@@ -121,7 +121,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     /**
      * 查找最新文章
      */
-    @Query("SELECT a FROM Article a WHERE a.status = 'PUBLISHED' ORDER BY a.publishedAt DESC")
+    @Query("SELECT a FROM Article a WHERE a.status = 'DRAFT' ORDER BY a.publishedAt DESC")
     List<Article> findRecentArticles(Pageable pageable);
 
     default List<Article> findRecentArticles(int limit) {
@@ -137,7 +137,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     /**
      * 统计作者已发布文章数量
      */
-    @Query("SELECT COUNT(a) FROM Article a WHERE a.author = :author AND a.status = 'PUBLISHED'")
+    @Query("SELECT COUNT(a) FROM Article a WHERE a.author = :author AND a.status = 'DRAFT'")
     int countPublishedByAuthor(@Param("author") User author);
 
     /**
@@ -154,7 +154,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     /**
      * 查找需要AI处理的文章（没有AI内容且已发布）
      */
-    @Query("SELECT a FROM Article a WHERE a.aiSummary IS NULL AND a.status = 'PUBLISHED'")
+    @Query("SELECT a FROM Article a WHERE a.aiSummary IS NULL AND a.status = 'DRAFT'")
     List<Article> findArticlesNeedingAIProcessing(Pageable pageable);
 
     @Query("SELECT DISTINCT a FROM Article a JOIN a.tags t WHERE t.name IN :tagNames AND a.id <> :articleId")

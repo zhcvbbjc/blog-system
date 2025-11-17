@@ -4,6 +4,7 @@ import com.blog.dto.request.ArticleRequest;
 import com.blog.dto.response.ApiResponse;
 import com.blog.dto.response.ArticleResponse;
 import com.blog.entity.User;
+import com.blog.security.CustomUserDetails;
 import com.blog.service.ArticleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,6 @@ public class ArticleController {
 
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-
         Page<ArticleResponse> articles = articleService.getArticles(pageable, tag);
         return ResponseEntity.ok(ApiResponse.success("获取成功", articles));
     }
@@ -68,9 +68,10 @@ public class ArticleController {
             @Valid @RequestBody ArticleRequest request,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        ArticleResponse article = articleService.createArticle(request, user);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        ArticleResponse article = articleService.createArticle(request, user);
         return ResponseEntity.ok(ApiResponse.success("文章创建成功", article));
     }
 
@@ -83,9 +84,10 @@ public class ArticleController {
             @Valid @RequestBody ArticleRequest request,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        ArticleResponse article = articleService.updateArticle(id, request, user);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        ArticleResponse article = articleService.updateArticle(id, request, user);
         return ResponseEntity.ok(ApiResponse.success("文章更新成功", article));
     }
 
@@ -97,9 +99,10 @@ public class ArticleController {
             @PathVariable Long id,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        articleService.deleteArticle(id, user);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        articleService.deleteArticle(id, user);
         return ResponseEntity.ok(ApiResponse.success("文章删除成功", null));
     }
 
@@ -111,9 +114,10 @@ public class ArticleController {
             @PathVariable Long id,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        ArticleResponse article = articleService.publishArticle(id, user);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        ArticleResponse article = articleService.publishArticle(id, user);
         return ResponseEntity.ok(ApiResponse.success("文章发布成功", article));
     }
 
@@ -125,9 +129,10 @@ public class ArticleController {
             @PathVariable Long id,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        ArticleResponse article = articleService.unpublishArticle(id, user);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        ArticleResponse article = articleService.unpublishArticle(id, user);
         return ResponseEntity.ok(ApiResponse.success("文章取消发布成功", article));
     }
 

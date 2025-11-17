@@ -4,6 +4,7 @@ import com.blog.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -14,10 +15,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -41,60 +47,70 @@ public class SecurityConfig {
     }
 
     /**
-     * 安全过滤器链配置
+     * 全局 CORS（Spring Security 自动启用）
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        // 开发环境允许全部（生产环境请改为前端域名）
+        config.setAllowedOrigins(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("*"));
+        config.setAllowCredentials(false);
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    /**
+     * 安全过滤器链
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
-                // 禁用 CSRF（因为使用 JWT）
                 .csrf(csrf -> csrf.disable())
-
-                // 设置会话管理为无状态（因为使用 JWT）
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
-                // 配置请求授权
                 .authorizeHttpRequests(authz -> authz
-                        // 公开接口和页面（不需要认证）
+                        // 允许预检请求（否则前端永远 403）
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 公开接口（文章列表/详情）
                         .requestMatchers(
-                                "/api/auth/**",           // 认证相关接口
-                                "/api/articles/public/**", // 公开文章接口
-                                "/api/articles/**",       // 文章API（部分公开）
-                                "/api/articles/**/count", // 文章统计（公开）
-                                "/api/likes/article/**/count", // 点赞数（公开）
-                                "/api/comments/article/**", // 评论列表（公开）
-                                "/swagger-ui/**",         // Swagger UI
-                                "/v3/api-docs/**",        // API 文档
-                                "/error",                 // 错误页面
-                                "/favicon.ico",           // 网站图标
-                                "/css/**",                // CSS静态资源
-                                "/js/**",                 // JavaScript静态资源
-                                "/images/**",             // 图片静态资源
-                                "/uploads/**",            // 上传文件
-                                "/",                      // 首页
-                                "/home",                  // 首页
-                                "/index",                 // 首页
-                                "/login",                 // 登录页
-                                "/register",              // 注册页
-                                "/article/**",            // 文章详情页
-                                "/search",                // 搜索页
-                                "/tags",                  // 标签页
-                                "/tag/**",                // 标签文章列表页
-                                "/user/**",               // 用户个人中心页（查看）
-                                "/about"                  // 关于页
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/auth/me",           // ← 新增：必须允许匿名访问 profile()
+
+                                "/api/articles",
+                                "/api/articles/**",
+                                "/api/articles/*/count",
+                                "/api/likes/article/*/count",
+                                "/api/comments/article/**",
+
+                                "/error",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/", "/index", "/home",
+                                "/login", "/register",
+                                "/article/**", "/search",
+                                "/tags", "/tag/**", "/about"
                         ).permitAll()
 
-                        // 管理接口和页面需要管理员权限
+
+                        // 管理接口
                         .requestMatchers("/api/admin/**", "/admin/**").hasRole("ADMIN")
 
-                        // 其他所有请求都需要认证
+                        // 其他都要登录
                         .anyRequest().authenticated()
                 )
-
-                // 添加 JWT 认证过滤器
-                .addFilterBefore(jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                // 添加 JWT 过滤器
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

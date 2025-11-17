@@ -36,7 +36,7 @@ public class RedisConfig {
      * 配置用于存储字符串的 RedisTemplate
      * 专门用于存储简单的字符串值
      */
-    @Bean
+    @Bean("customStringRedisTemplate")
     public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);

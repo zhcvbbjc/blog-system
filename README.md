@@ -15,9 +15,9 @@
 - Maven
 
 **前端：**
-- 现代前端框架（React/Vue.js）
-- 响应式设计
-- RESTful API 交互
+- React 18 + Vite + TypeScript
+- React Router + React Query
+- 纯前后端分离，RESTful API 交互
 
 ## 核心功能模块
 
@@ -123,16 +123,32 @@
 ## 部署方案
 
 ### 开发环境
-- 本地开发服务器
-- H2 内存数据库
-- 热部署支持
+- `backend`：Spring Boot（端口 8080）
+- `frontend`：Vite（端口 5173，自动代理 `/api` 到 8080）
+- Node.js 18+ 与 npm / pnpm
 
 ### 生产环境
 - Docker 容器化部署
-- Nginx 反向代理
+- Nginx 反向代理（静态资源 + API 反向代理）
 - MySQL 集群
 - Redis 缓存
-- 文件存储服务
+- 对象存储 / CDN
+
+## 启动方式
+
+1. **启动后端**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+2. **启动前端**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+3. 访问 `http://localhost:5173` 查看全新 React 前端。
 
 ## 使用场景
 

@@ -4,6 +4,7 @@ import com.blog.dto.request.CommentRequest;
 import com.blog.dto.response.ApiResponse;
 import com.blog.dto.response.CommentResponse;
 import com.blog.entity.User;
+import com.blog.security.CustomUserDetails;
 import com.blog.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,9 @@ public class CommentController {
             @Valid @RequestBody CommentRequest request,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
+
         CommentResponse comment = commentService.createComment(articleId, request, user);
 
         return ResponseEntity.ok(ApiResponse.success("评论发表成功", comment));
@@ -53,7 +56,9 @@ public class CommentController {
             @Valid @RequestBody CommentRequest request,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
+
         CommentResponse comment = commentService.replyComment(parentId, request, user);
 
         return ResponseEntity.ok(ApiResponse.success("回复成功", comment));
@@ -67,7 +72,9 @@ public class CommentController {
             @PathVariable Long id,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
+
         commentService.deleteComment(id, user);
 
         return ResponseEntity.ok(ApiResponse.success("评论删除成功", null));

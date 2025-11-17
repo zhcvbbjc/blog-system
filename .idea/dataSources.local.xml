@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="IU-252.27397.103">
+    <data-source name="blog_prod@localhost" uuid="59ebc1cd-c0c4-474f-825e-8a392fe99e98">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
+      <user-name>${DB_USERNAME}</user-name>
+      <schema-mapping />
+    </data-source>
+    <data-source name="blog_dev@localhost" uuid="41f72d38-3df2-4157-aa2c-563e21d7df64">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
+      <user-name>root</user-name>
+      <schema-mapping />
+    </data-source>
+    <data-source name="0@localhost" uuid="ef62d890-22a0-43d6-a158-6ae2f1bbfe51">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="REDIS" />
+      <schema-mapping />
+    </data-source>
+  </component>
+</project>

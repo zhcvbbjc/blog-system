@@ -1,0 +1,20 @@
+.wrapper {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background-color: #fee2e2;
+  color: #991b1b;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+button {
+  border: none;
+  background-color: #ef4444;
+  color: #fff;
+  padding: 0.4rem 0.9rem;
+  border-radius: 0.5rem;
+  cursor: default;
+}
+

@@ -1,0 +1,47 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.header input {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  min-width: 260px;
+}
+
+.list {
+  display: grid;
+  gap: 1rem;
+}
+
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.pagination button {
+  border: 1px solid #e5e7eb;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  cursor: default;
+  color: #0f172a;
+}
+
+.pagination .active {
+  background-color: #0ea5e9;
+  color: #fff;
+  border-color: #0ea5e9;
+}
+

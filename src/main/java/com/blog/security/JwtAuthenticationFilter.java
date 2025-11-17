@@ -100,18 +100,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * 排除某些路径不过滤（可选）
      * 例如：公开接口、静态资源等
      */
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        String path = request.getServletPath();
+//
+//        // 这些路径不需要 JWT 认证
+//        return path.startsWith("/api/auth/") ||
+//                path.startsWith("/api/articles/public/") ||
+//                path.startsWith("/swagger-ui/") ||
+//                path.startsWith("/v3/api-docs/") ||
+//                path.startsWith("/webjars/") ||
+//                path.equals("/error") ||
+//                path.startsWith("/uploads/");
+//    }
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
 
         // 这些路径不需要 JWT 认证
-        return path.startsWith("/api/auth/") ||
+        return path.startsWith("/api/auth/login") ||      // 登录
+                path.startsWith("/api/auth/register") ||  // 注册
+                path.startsWith("/api/auth/refresh") ||   // 刷新token（如果有）
                 path.startsWith("/api/articles/public/") ||
                 path.startsWith("/swagger-ui/") ||
                 path.startsWith("/v3/api-docs/") ||
                 path.startsWith("/webjars/") ||
                 path.equals("/error") ||
                 path.startsWith("/uploads/");
+        // 注意：移除了 /api/auth/me，因为这个接口需要认证
     }
 
     /**

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaAuditing  // 启用 JPA 审计功能
+//@EnableJpaAuditing  // 启用 JPA 审计功能
 @EnableJpaRepositories(basePackages = "com.blog.repository")  // 指定 Repository 扫描路径
 @EnableTransactionManagement  // 启用事务管理
 public class JpaConfig {

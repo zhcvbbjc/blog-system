@@ -5,10 +5,12 @@ import com.blog.dto.request.RegisterRequest;
 import com.blog.dto.response.ApiResponse;
 import com.blog.dto.response.UserResponse;
 import com.blog.entity.User;
+import com.blog.security.CustomUserDetails;
 import com.blog.security.JwtTokenProvider;
 import com.blog.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,21 +44,41 @@ public class AuthController {
     /**
      * 用户登录
      */
+//    @PostMapping("/login")
+//    public ResponseEntity<ApiResponse<Map<String, Object>>> login(@Valid @RequestBody LoginRequest request) {
+//        // 认证用户
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+//        );
+//
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        // 生成令牌
+//        String token = jwtTokenProvider.generateToken(authentication);
+//        User user = (User) authentication.getPrincipal();
+//        UserResponse userResponse = UserResponse.fromUser(user);
+//
+//        // 返回令牌和用户信息
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("token", token);
+//        data.put("user", userResponse);
+//
+//        return ResponseEntity.ok(ApiResponse.success("登录成功", data));
+//    }
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Map<String, Object>>> login(@Valid @RequestBody LoginRequest request) {
-        // 认证用户
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 生成令牌
         String token = jwtTokenProvider.generateToken(authentication);
-        User user = (User) authentication.getPrincipal();
-        UserResponse userResponse = UserResponse.fromUser(user);
 
-        // 返回令牌和用户信息
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserResponse userResponse = UserResponse.fromUser(userDetails.toUser());
+
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
         data.put("user", userResponse);
@@ -64,20 +86,57 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("登录成功", data));
     }
 
+
     /**
      * 获取当前用户信息
      */
+//    @GetMapping("/me")
+//    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(Authentication authentication) {
+//        User user = (User) authentication.getPrincipal();
+//        UserResponse userResponse = UserResponse.fromUser(user);
+//
+//        return ResponseEntity.ok(ApiResponse.success("获取成功", userResponse));
+//    }
+//    @GetMapping("/me")
+//    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(Authentication authentication) {
+//
+//        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+//        UserResponse userResponse = UserResponse.fromUser(userDetails.toUser());
+//
+//        return ResponseEntity.ok(ApiResponse.success("获取成功", userResponse));
+//    }
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        UserResponse userResponse = UserResponse.fromUser(user);
+    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication.getPrincipal().equals("anonymousUser")) {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("未登录"));
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserResponse userResponse = UserResponse.fromUser(userDetails.toUser());
 
         return ResponseEntity.ok(ApiResponse.success("获取成功", userResponse));
     }
 
+
+
     /**
      * 刷新令牌
      */
+//    @PostMapping("/refresh")
+//    public ResponseEntity<ApiResponse<Map<String, String>>> refreshToken(Authentication authentication) {
+//        String newToken = jwtTokenProvider.generateToken(authentication);
+//
+//        Map<String, String> data = new HashMap<>();
+//        data.put("token", newToken);
+//
+//        return ResponseEntity.ok(ApiResponse.success("令牌刷新成功", data));
+//    }
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<Map<String, String>>> refreshToken(Authentication authentication) {
         String newToken = jwtTokenProvider.generateToken(authentication);
@@ -87,6 +146,7 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiResponse.success("令牌刷新成功", data));
     }
+
 
     /**
      * 用户注销

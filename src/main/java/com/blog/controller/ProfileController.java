@@ -4,6 +4,7 @@ import com.blog.dto.response.ApiResponse;
 import com.blog.dto.response.ProfileResponse;
 import com.blog.dto.response.UserActivityResponse;
 import com.blog.entity.User;
+import com.blog.security.CustomUserDetails;
 import com.blog.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,9 +28,10 @@ public class ProfileController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<ProfileResponse>> getProfile(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        ProfileResponse profile = profileService.getProfile(user.getId());
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        ProfileResponse profile = profileService.getProfile(user.getId());
         return ResponseEntity.ok(ApiResponse.success("获取成功", profile));
     }
 
@@ -47,9 +49,10 @@ public class ProfileController {
      */
     @GetMapping("/stats")
     public ResponseEntity<ApiResponse<ProfileResponse.UserStats>> getProfileStats(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        ProfileResponse.UserStats stats = profileService.getUserStats(user.getId());
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        ProfileResponse.UserStats stats = profileService.getUserStats(user.getId());
         return ResponseEntity.ok(ApiResponse.success("获取成功", stats));
     }
 
@@ -62,7 +65,9 @@ public class ProfileController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        User user = (User) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
+
         Pageable pageable = PageRequest.of(page, size);
         Page<UserActivityResponse> timeline = profileService.getUserTimeline(user.getId(), pageable);
 
@@ -77,9 +82,10 @@ public class ProfileController {
             Authentication authentication,
             @RequestParam(defaultValue = "5") int limit) {
 
-        User user = (User) authentication.getPrincipal();
-        List<UserActivityResponse> activities = profileService.getRecentActivities(user.getId(), limit);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        List<UserActivityResponse> activities = profileService.getRecentActivities(user.getId(), limit);
         return ResponseEntity.ok(ApiResponse.success("获取成功", activities));
     }
 }

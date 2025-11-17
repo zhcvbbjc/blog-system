@@ -41,6 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         log.debug("Loaded user by username: {}", username);
         return CustomUserDetails.create(user);
+//        return user;
     }
 
     /**
@@ -61,6 +62,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         log.debug("Loaded user by id: {}", id);
         return CustomUserDetails.create(user);
+//        return user;
     }
 
     /**
@@ -81,5 +83,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         log.debug("Loaded user by email: {}", email);
         return CustomUserDetails.create(user);
+//        return user;
     }
 }

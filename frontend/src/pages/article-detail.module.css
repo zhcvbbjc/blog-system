@@ -1,0 +1,49 @@
+.article {
+  background-color: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tagline {
+  color: #0ea5e9;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.meta {
+  color: #6b7280;
+}
+
+.stats {
+  display: flex;
+  gap: 1.5rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+.content {
+  line-height: 1.9;
+  color: #1f2937;
+}
+
+.content h2,
+.content h3,
+.content h4 {
+  margin-top: 1.8rem;
+}
+
+.content p {
+  margin: 1rem 0;
+}
+

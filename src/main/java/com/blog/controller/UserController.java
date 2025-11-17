@@ -6,6 +6,7 @@ import com.blog.dto.response.ApiResponse;
 import com.blog.dto.response.ArticleResponse;
 import com.blog.dto.response.UserResponse;
 import com.blog.entity.User;
+import com.blog.security.CustomUserDetails;
 import com.blog.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +44,10 @@ public class UserController {
             @Valid @RequestBody UpdateProfileRequest request,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        UserResponse updatedUser = userService.updateProfile(user.getId(), request);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        UserResponse updatedUser = userService.updateProfile(user.getId(), request);
         return ResponseEntity.ok(ApiResponse.success("个人信息更新成功", updatedUser));
     }
 
@@ -57,9 +59,10 @@ public class UserController {
             @RequestParam("file") MultipartFile file,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        UserResponse updatedUser = userService.updateAvatar(user.getId(), file);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        UserResponse updatedUser = userService.updateAvatar(user.getId(), file);
         return ResponseEntity.ok(ApiResponse.success("头像更新成功", updatedUser));
     }
 
@@ -71,9 +74,10 @@ public class UserController {
             @Valid @RequestBody UpdatePasswordRequest request,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        userService.updatePassword(user.getId(), request);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        userService.updatePassword(user.getId(), request);
         return ResponseEntity.ok(ApiResponse.success("密码修改成功", null));
     }
 

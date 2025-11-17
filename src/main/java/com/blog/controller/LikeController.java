@@ -2,6 +2,7 @@ package com.blog.controller;
 
 import com.blog.dto.response.ApiResponse;
 import com.blog.entity.User;
+import com.blog.security.CustomUserDetails;
 import com.blog.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,10 @@ public class LikeController {
             @PathVariable Long articleId,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        likeService.likeArticle(articleId, user.getId());
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        likeService.likeArticle(articleId, user.getId());
         return ResponseEntity.ok(ApiResponse.success("点赞成功", null));
     }
 
@@ -37,9 +39,10 @@ public class LikeController {
             @PathVariable Long articleId,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        likeService.unlikeArticle(articleId, user.getId());
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        likeService.unlikeArticle(articleId, user.getId());
         return ResponseEntity.ok(ApiResponse.success("取消点赞成功", null));
     }
 
@@ -51,9 +54,10 @@ public class LikeController {
             @PathVariable Long articleId,
             Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
-        boolean isLiked = likeService.isArticleLikedByUser(articleId, user.getId());
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
 
+        boolean isLiked = likeService.isArticleLikedByUser(articleId, user.getId());
         return ResponseEntity.ok(ApiResponse.success("获取成功", isLiked));
     }
 

@@ -1,0 +1,67 @@
+.card {
+  background: #fff;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.meta {
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+dt {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+dd {
+  margin: 0.25rem 0 0;
+  color: #475569;
+}
+
+.bio {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.25rem;
+}
+
+.bio h2 {
+  margin-bottom: 0.5rem;
+}
+
+.bio p {
+  color: #475569;
+  line-height: 1.7;
+}
+

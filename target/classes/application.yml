@@ -48,7 +48,7 @@ blog:
     allowed-types: "image/jpeg,image/png,image/gif,image/webp,application/pdf"
 
   jwt:
-    secret: "${JWT_SECRET:default-jwt-secret-key-change-in-production}"
+    secret: "xZw20010419_xZw20010419_xZw20010419_1234567890abcdefABCDEF!@#$%^&*()"
     expiration: 86400000  # 24小时（毫秒）
 
   ai:

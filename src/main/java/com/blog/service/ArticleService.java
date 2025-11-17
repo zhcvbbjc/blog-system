@@ -35,11 +35,16 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public Page<ArticleResponse> getArticles(Pageable pageable, String tag) {
         Page<Article> articles;
+        System.out.println("=== 开始查询文章 ===");
+        System.out.println("查询状态: DRAFT");
+        System.out.println("分页参数: page=" + pageable.getPageNumber() + ", size=" + pageable.getPageSize());
         if (tag != null && !tag.trim().isEmpty()) {
-            articles = articleRepository.findByTagsNameAndStatus(tag, Article.ArticleStatus.PUBLISHED, pageable);
+            articles = articleRepository.findByTagsNameAndStatus(tag, Article.ArticleStatus.DRAFT, pageable);
         } else {
-            articles = articleRepository.findByStatus(Article.ArticleStatus.PUBLISHED, pageable);
+            articles = articleRepository.findByStatus(Article.ArticleStatus.DRAFT, pageable);
         }
+        System.out.println("查询结果数量: " + articles.getNumberOfElements());
+        System.out.println("总文章数: " + articles.getTotalElements());
 
         return articles.map(article ->
                 ArticleResponse.fromArticleWithAuthor(article, article.getAuthor()));
