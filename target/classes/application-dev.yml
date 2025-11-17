@@ -1,0 +1,106 @@
+# 开发环境配置
+spring:
+  # 数据源配置（开发环境使用H2内存数据库或本地MySQL）
+  datasource:
+    url: jdbc:mysql://localhost:3306/blog_dev?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: xzw20010419
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 30000
+
+  # JPA配置（开发环境显示SQL）
+  jpa:
+    hibernate:
+      ddl-auto: update # 开发环境使用 update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          time_zone: Asia/Shanghai
+        connection:
+          auto-commit: true
+
+  # Redis配置（开发环境）
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+  # Spring AI配置（开发环境）
+  ai:
+    openai:
+      base-url: https://api.deepseek.com/v1
+      api-key: ${DEEPSEEK_API_KEY}
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+
+  # 邮件配置（开发环境）
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+  # H2 控制台（仅开发）
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # SQL 初始化（保持 MySQL 兼容）
+  sql:
+    init:
+      platform: mysql
+
+# 开发环境日志配置
+logging:
+  level:
+    com.yourdomain.blog: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
+  file:
+    name: logs/blog-dev.log
+
+# 开发环境特定配置
+blog:
+  # 跨域
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:8080"
+
+  # 功能开关
+  features:
+    demo-mode: true
+    reset-database: false
+
+  # 开发环境 AI 配置
+  ai:
+    enabled: true
+    timeout: 30000
+
+# 开发工具配置
+debug: true

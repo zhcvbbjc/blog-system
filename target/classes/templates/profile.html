@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout}">
+<head>
+    <title th:text="${profile.user.username + ' - 个人中心'}">个人中心 - 智能博客系统</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container">
+            <!-- 用户信息卡片 -->
+            <div class="card mb-3">
+                <div class="flex-between">
+                    <div class="flex" style="gap: 1.5rem;">
+                        <img th:src="${profile.user.avatarUrl ?: '/images/default-avatar.png'}" 
+                             alt="头像" 
+                             style="width: 80px; height: 80px; border-radius: 50%;">
+                        <div>
+                            <h2 th:text="${profile.user.username}">用户名</h2>
+                            <p th:text="${profile.user.bio ?: '这个人很懒，什么都没有留下'}">个人简介</p>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="/profile/edit" class="btn btn-primary" th:if="${user && user.id == profile.user.id}">编辑资料</a>
+                        <button class="btn btn-outline" th:if="${user && user.id != profile.user.id}">关注</button>
+                    </div>
+                </div>
+
+                <div class="flex" style="gap: 2rem; margin-top: 1.5rem;">
+                    <div>
+                        <div class="text-center">
+                            <div class="stat-number" th:text="${profile.stats.totalArticles}">0</div>
+                            <div class="stat-label">文章</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-center">
+                            <div class="stat-number" th:text="${profile.stats.totalLikes}">0</div>
+                            <div class="stat-label">获赞</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-center">
+                            <div class="stat-number" th:text="${profile.stats.totalComments}">0</div>
+                            <div class="stat-label">评论</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-center">
+                            <div class="stat-number" th:text="${profile.stats.totalViews}">0</div>
+                            <div class="stat-label">阅读</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 内容选项卡 -->
+            <div class="card">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('articles')">文章</button>
+                    <button class="tab-btn" onclick="switchTab('liked')">收藏</button>
+                    <button class="tab-btn" onclick="switchTab('comments')">评论</button>
+                    <button class="tab-btn" onclick="switchTab('settings')" th:if="${user && user.id == profile.user.id}">设置</button>
+                </div>
+
+                <!-- 文章列表 -->
+                <div id="articlesTab" class="tab-content">
+                    <div class="articles-list" id="userArticlesList">
+                        <!-- 文章将通过JavaScript加载 -->
+                    </div>
+                </div>
+
+                <!-- 收藏列表 -->
+                <div id="likedTab" class="tab-content" style="display: none;">
+                    <div class="articles-list" id="likedArticlesList">
+                        <!-- 收藏的文章将通过JavaScript加载 -->
+                    </div>
+                </div>
+
+                <!-- 评论列表 -->
+                <div id="commentsTab" class="tab-content" style="display: none;">
+                    <div id="commentsList">
+                        <!-- 评论将通过JavaScript加载 -->
+                    </div>
+                </div>
+
+                <!-- 设置 -->
+                <div id="settingsTab" class="tab-content" style="display: none;">
+                    <form id="settingsForm">
+                        <!-- 设置表单 -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            min-height: 200px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+    </style>
+
+    <script>
+        const userId = [[${profile.user.id}]];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserArticles(userId);
+        });
+
+        function switchTab(tabName) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // 移除所有标签按钮的active类
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 显示选中的标签内容
+            const activeTab = document.getElementById(tabName + 'Tab');
+            if (activeTab) {
+                activeTab.style.display = 'block';
+            }
+            
+            // 添加active类到选中的按钮
+            event.target.classList.add('active');
+            
+            // 加载对应标签的数据
+            if (tabName === 'articles') {
+                loadUserArticles(userId);
+            } else if (tabName === 'liked') {
+                loadLikedArticles(userId);
+            } else if (tabName === 'comments') {
+                loadUserComments(userId);
+            }
+        }
+
+        async function loadUserArticles(userId) {
+            try {
+                const articles = await apiRequest(`/users/${userId}/articles?page=0&size=10`, {
+                    method: 'GET'
+                });
+                
+                const articlesList = document.getElementById('userArticlesList');
+                if (articlesList && articles.content) {
+                    articlesList.innerHTML = articles.content.map(article => `
+                        <div class="article-card">
+                            <h3 class="article-title">
+                                <a href="/article/${article.id}">${article.title}</a>
+                            </h3>
+                            <div class="article-meta">
+                                <span>${formatDate(article.createdAt)}</span>
+                                <span>${article.viewCount} 阅读</span>
+                                <span>${article.likeCount} 点赞</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('加载用户文章失败:', error);
+            }
+        }
+
+        async function loadLikedArticles(userId) {
+            // TODO: 实现加载收藏的文章
+        }
+
+        async function loadUserComments(userId) {
+            // TODO: 实现加载用户的评论
+        }
+    </script>
+</body>
+</html>
+

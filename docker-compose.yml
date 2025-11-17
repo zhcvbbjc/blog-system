@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: blog-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: blog_dev
+      MYSQL_USER: blog_user
+      MYSQL_PASSWORD: blog_pass123
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --max_connections=200
+      - --wait_timeout=28800
+    networks:
+      - blog-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis 缓存服务
+  redis:
+    image: redis:7-alpine
+    container_name: blog-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass redis123456
+    networks:
+      - blog-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis123456", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # 博客应用服务（可选，用于生产环境）
+  # 如果需要将应用也容器化，可以取消注释下面的配置
+  # blog-app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: blog-app
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: prod
+  #     DB_HOST: mysql
+  #     DB_NAME: blog_dev
+  #     DB_USERNAME: blog_user
+  #     DB_PASSWORD: blog_pass123
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     REDIS_PASSWORD: redis123456
+  #     JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+  #     DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+  #   volumes:
+  #     - ./uploads:/app/uploads
+  #     - ./logs:/app/logs
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   networks:
+  #     - blog-network
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  blog-network:
+    driver: bridge
+

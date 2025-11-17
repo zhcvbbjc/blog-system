@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: personal-blog
+
+  profiles:
+    active: dev  # 默认使用开发环境
+
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+# 服务器配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.yourdomain.blog: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/blog-app.log
+
+# 应用通用配置
+app:
+  name: "个人博客系统"
+  version: "1.0.0"
+  description: "基于Spring Boot和Spring AI的智能个人博客系统"
+
+# 博客系统配置
+blog:
+  file:
+    upload-dir: "./uploads"
+    max-size: 10MB
+    allowed-types: "image/jpeg,image/png,image/gif,image/webp,application/pdf"
+
+  jwt:
+    secret: "${JWT_SECRET:default-jwt-secret-key-change-in-production}"
+    expiration: 86400000  # 24小时（毫秒）
+
+  ai:
+    enabled: true
+    auto-generate-summary: true
+    auto-generate-tags: true
+    max-content-length: 4000
+
+  pagination:
+    default-page-size: 10
+    max-page-size: 50
+
+  cache:
+    enabled: true
+    ttl: 3600  # 1小时（秒）
+
+# Spring Boot Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics"
+  endpoint:
+    health:
+      show-details: when_authorized
+    metrics:
+      enabled: true

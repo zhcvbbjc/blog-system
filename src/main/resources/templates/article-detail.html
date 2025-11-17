@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout}">
+<head>
+    <title th:text="${article.title + ' - 智能博客系统'}">文章详情 - 智能博客系统</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container">
+            <div class="grid grid-2">
+                <!-- 左侧：文章内容 -->
+                <div class="main-content">
+                    <article class="card">
+                        <header class="article-header">
+                            <h1 class="article-title" th:text="${article.title}">文章标题</h1>
+                            
+                            <div class="article-meta">
+                                <span>
+                                    <a th:href="@{/user/{id}(id=${article.author.id})}" 
+                                       th:text="${article.author.username}">作者</a>
+                                </span>
+                                <span th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}">发布时间</span>
+                                <span th:text="${article.viewCount} + ' 阅读'">0 阅读</span>
+                                <span th:text="${article.likeCount} + ' 点赞'">0 点赞</span>
+                                <span th:text="${article.commentCount} + ' 评论'">0 评论</span>
+                            </div>
+
+                            <div class="article-tags" th:if="${article.tags}">
+                                <a th:each="tag : ${article.tags}" 
+                                   th:href="@{/tag/{tag}(tag=${tag})}"
+                                   class="tag" 
+                                   th:text="${tag}">标签</a>
+                            </div>
+                        </header>
+
+                        <div class="article-actions mb-3">
+                            <button class="action-btn like-btn" 
+                                    th:attr="data-article-id=${article.id}"
+                                    onclick="toggleLike([[${article.id}]])">
+                                <span>👍</span>
+                                <span class="count" th:text="${article.likeCount}">0</span>
+                            </button>
+                            
+                            <button class="action-btn" 
+                                    onclick="shareArticle('[[${article.title}]]', window.location.href)">
+                                <span>分享</span>
+                            </button>
+                        </div>
+
+                        <div class="article-content" th:utext="${article.content}">
+                            <!-- 文章内容 -->
+                        </div>
+                    </article>
+
+                    <!-- 评论区 -->
+                    <div class="card mt-3">
+                        <h3 class="card-title">评论</h3>
+                        <div id="commentsList">
+                            <!-- 评论将通过JavaScript动态加载 -->
+                        </div>
+
+                        <!-- 评论表单 -->
+                        <div class="comment-form" th:if="${user}">
+                            <form id="commentForm" onsubmit="submitComment(event)">
+                                <div class="form-group">
+                                    <textarea class="form-textarea" 
+                                              id="commentContent" 
+                                              placeholder="写下你的评论..." 
+                                              required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">发表评论</button>
+                            </form>
+                        </div>
+                        <div th:unless="${user}">
+                            <p class="text-center">请<a href="/login">登录</a>后发表评论</p>
+                        </div>
+                    </div>
+
+                    <!-- 相关文章 -->
+                    <div class="card mt-3">
+                        <h3 class="card-title">相关文章</h3>
+                        <div id="relatedArticles">
+                            <!-- 相关文章将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：目录导航 -->
+                <div class="sidebar">
+                    <div class="sidebar-title">目录</div>
+                    <div class="table-of-contents" id="toc">
+                        <!-- 目录将通过JavaScript生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const articleId = [[${article.id}]];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查点赞状态
+            if (localStorage.getItem('token')) {
+                checkLikeStatus(articleId);
+            }
+            
+            // 加载评论
+            loadComments(articleId);
+            
+            // 生成目录
+            generateTOC();
+        });
+
+        async function loadComments(articleId) {
+            try {
+                const comments = await apiRequest(`/comments/article/${articleId}`, {
+                    method: 'GET'
+                });
+                
+                const commentsList = document.getElementById('commentsList');
+                if (commentsList && comments.length > 0) {
+                    commentsList.innerHTML = comments.map(comment => `
+                        <div class="comment">
+                            <div class="comment-header">
+                                <span class="comment-author">${comment.author.username}</span>
+                                <span class="comment-time">${formatDate(comment.createdAt)}</span>
+                            </div>
+                            <div class="comment-content">${comment.content}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('加载评论失败:', error);
+            }
+        }
+
+        async function submitComment(event) {
+            event.preventDefault();
+            
+            const content = document.getElementById('commentContent').value;
+            if (!content.trim()) {
+                showMessage('评论内容不能为空', 'error');
+                return;
+            }
+
+            try {
+                await apiRequest(`/comments/article/${articleId}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ content: content })
+                });
+                
+                showMessage('评论发表成功', 'success');
+                document.getElementById('commentContent').value = '';
+                loadComments(articleId);
+            } catch (error) {
+                showMessage(error.message || '评论发表失败', 'error');
+            }
+        }
+
+        function generateTOC() {
+            const content = document.querySelector('.article-content');
+            if (!content) return;
+            
+            const headings = content.querySelectorAll('h2, h3');
+            const toc = document.getElementById('toc');
+            
+            if (headings.length === 0 || !toc) return;
+            
+            const tocList = document.createElement('ul');
+            headings.forEach((heading, index) => {
+                const id = `heading-${index}`;
+                heading.id = id;
+                
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${id}`;
+                a.textContent = heading.textContent;
+                a.onclick = function(e) {
+                    e.preventDefault();
+                    heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+                
+                li.appendChild(a);
+                tocList.appendChild(li);
+            });
+            
+            toc.appendChild(tocList);
+        }
+    </script>
+</body>
+</html>
+
