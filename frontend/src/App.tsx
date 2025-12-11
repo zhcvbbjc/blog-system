@@ -9,6 +9,12 @@ import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import ArticleCreatePage from './pages/ArticleCreatePage';
+import MessagePage from "./pages/MessagePage";
+import ToolPage from "./pages/ToolPage";
+import NewsPage from "./pages/Tools/NewsPage";
+import MarketPage from "./pages/Tools/MarketPage";
+import KnowledgePage from "./pages/Tools/KnowledgePage";
+import AnalysisToolPage from "./pages/Tools/AnalysisToolPage";
 
 function App() {
   return (
@@ -19,13 +25,19 @@ function App() {
         <Route path="/articles/:slug" element={<ArticleDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/messages" element={<MessagePage />} />
+        <Route path="/tools" element={<ToolPage />} />
+        <Route path="/tools/news" element={<NewsPage />} />
+        <Route path="/tools/market" element={<MarketPage />} />
+        <Route path="/tools/knowledge" element={<KnowledgePage />} />
+        <Route path="/tools/analysis" element={<AnalysisToolPage />} />
         <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
         />
         <Route
           path="/profile"

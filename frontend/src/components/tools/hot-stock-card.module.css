@@ -1,0 +1,46 @@
+.card {
+    background: #fff;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.viewAll {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.viewAll:hover {
+    text-decoration: underline;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.up {
+    color: #059669;
+}
+
+.down {
+    color: #dc2626;
+}

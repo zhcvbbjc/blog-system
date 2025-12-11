@@ -38,21 +38,28 @@
   flex-wrap: wrap;
 }
 
+.primaryBtn,
+.secondaryBtn {
+    font-family: inherit;     /* 核心：强制让 button 和 a 都用同样的字体 */
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1;
+}
+
 .primaryBtn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  background-color: #0ea5e9;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    background-color: #0ea5e9;
+    color: #fff;
+    text-decoration: none;
 }
 
 .secondaryBtn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  border: 1px solid #94a3b8;
-  color: #0f172a;
-  text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    background-color: #0ea5e9;
+    color: #fff;
+    text-decoration: none;
 }
 
 .heroCard {

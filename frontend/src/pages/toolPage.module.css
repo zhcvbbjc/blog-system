@@ -1,0 +1,133 @@
+/* ===== 容器 ===== */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* ===== 顶部四个功能入口 ===== */
+.featureGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.featureCard {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.featureCard:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    border-color: #3b82f6;
+}
+
+.featureCard h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #1e293b;
+}
+
+.featureCard p {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* ===== 主体：左新闻 + 右行情 ===== */
+.mainContent {
+    display: grid;
+    grid-template-columns: 4fr 2fr; /* 左新闻更宽，右边更窄 */
+    gap: 1.5rem;
+}
+
+/* ===== 让 NewsCard、MarketIndexCard、HotStockCard 外层容器成为纯布局容器 ===== */
+/* 不要背景，不要 padding，不影响卡片实际尺寸 */
+.newsSection {
+    padding: 0;
+}
+
+.marketSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0;
+}
+
+/* ===== 通用卡片（NewsCard / MarketIndexCard / HotStockCard）外框 ===== */
+.newsSection,
+.marketCard {
+    /* 这两者中的内容都带卡片样式 */
+}
+
+.marketCard {
+    padding: 0; /* MarketIndexCard & HotStockCard 自己有 padding，不重复 */
+}
+
+/* ===== 标题、查看全部 ===== */
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.sectionTitle,
+.marketCard h3 {
+    margin-top: 0;
+    padding-top: 4px;
+}
+
+.viewAll {
+    font-size: 0.85rem;
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.viewAll:hover {
+    text-decoration: underline;
+    color: #1e40af;
+}
+
+/* ===== 新闻列表 ===== */
+.newsList li {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    color: #374151;
+}
+
+/* ===== 行情列表 ===== */
+.indexList,
+.stockList {
+    margin-top: 1rem;
+}
+
+.indexItem,
+.stockItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+/* ===== 涨跌颜色 ===== */
+.up {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.down {
+    color: #dc2626;
+    font-weight: 600;
+}

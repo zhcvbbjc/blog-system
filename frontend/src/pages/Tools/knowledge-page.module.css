@@ -1,0 +1,122 @@
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ===== 第一部分：标题 + 搜索框 ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 2rem;
+}
+
+.searchInput {
+    padding: 0.5rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    width: 250px;
+}
+
+/* ===== 第二部分 ===== */
+.middle {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+/* 左侧 */
+.left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.smallCard {
+    background: #f0f9ff;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.smallCard h3 {
+    margin: 0 0 0.5rem 0;
+}
+
+.moduleGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.moduleCard {
+    background: #e0f2fe;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.moduleCard:hover {
+    transform: translateY(-4px);
+}
+
+/* 右侧：书籍 */
+.right h3 {
+    margin-bottom: 1rem;
+}
+
+.booksGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
+.bookCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.bookCard img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* 第三部分：视频 */
+.videosSection h3 {
+    margin-bottom: 1rem;
+}
+
+.videoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.videoCard iframe {
+    width: 100%;
+    height: 140px;
+    border-radius: 0.5rem;
+}
+
+.videoCard p {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    text-align: center;
+}

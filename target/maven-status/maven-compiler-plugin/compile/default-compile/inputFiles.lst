@@ -23,6 +23,7 @@ D:\blog-system\src\main\java\com\blog\config\SecurityConfig.java
 D:\blog-system\src\main\java\com\blog\security\SecurityUtils.java
 D:\blog-system\src\main\java\com\blog\util\SlugUtil.java
 D:\blog-system\src\main\java\com\blog\service\LikeService.java
+D:\blog-system\src\main\java\com\blog\controller\tools\MarketController.java
 D:\blog-system\src\main\java\com\blog\entity\Like.java
 D:\blog-system\src\main\java\com\blog\dto\request\LoginRequest.java
 D:\blog-system\src\main\java\com\blog\controller\ProfileController.java

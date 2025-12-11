@@ -15,11 +15,17 @@ function Navbar() {
     <header className={styles.navbar}>
       <div className={styles.inner}>
         <Link to="/" className={styles.brand}>
-          智能博客
+          金融信息平台
         </Link>
         <nav className={styles.links}>
           <NavLink to="/" className={({ isActive }) => (isActive ? styles.active : undefined)}>
             首页
+          </NavLink>
+          <NavLink
+            to="/tools"
+            className={({ isActive }) => (isActive ? styles.active : undefined)}
+          >
+            工具
           </NavLink>
           <NavLink
             to="/articles"
@@ -27,6 +33,15 @@ function Navbar() {
           >
             文章
           </NavLink>
+
+          {user && (
+            <NavLink
+              to="/messages"
+              className={({ isActive }) => (isActive ? styles.active : undefined)}
+            >
+              消息
+            </NavLink>
+          )}
           {user && (
             <NavLink
               to="/dashboard"

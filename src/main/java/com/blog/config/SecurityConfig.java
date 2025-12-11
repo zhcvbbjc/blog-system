@@ -91,6 +91,8 @@ public class SecurityConfig {
                                 "/api/articles/**",
                                 "/api/articles/*/count",
                                 "/api/likes/article/*/count",
+                                "/api/tools/market",    // ⬅⬅⬅ 放行行情接口
+                                "/api/tools/market/**",
                                 "/api/comments/article/**",
 
                                 "/error",

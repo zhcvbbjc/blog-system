@@ -1,17 +1,31 @@
+export interface ArticleAuthor {
+    id: number;
+    username: string;
+    email: string;
+    avatarUrl: string | null;
+    bio: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface Article {
-  id: number;
-  title: string;
-  summary: string;
-  content: string;
-  slug: string;
-  tags: string[];
-  authorName: string;
-  coverImage?: string;
-  createdAt: string;
-  updatedAt: string;
-  likeCount: number;
-  viewCount: number;
-  commentCount: number;
+    id: number;
+    title: string;
+    content: string;
+    summary: string | null;
+    slug: string;
+    status: string;
+    tags: string[];
+    author: ArticleAuthor;   // ← ★ 加上这个
+    viewCount: number;
+    likeCount: number;
+    commentCount: number;
+    aiSummary: string | null;
+    aiTags: string[];
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string | null;
+    liked: boolean;
 }
 
 export interface PaginatedArticles {

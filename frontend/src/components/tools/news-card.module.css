@@ -1,0 +1,39 @@
+.card {
+    background: #fff;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.sectionTitle {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.viewAll {
+    color: #3b82f6;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.viewAll:hover {
+    text-decoration: underline;
+}
+
+.newsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.newsList li {
+    padding: 4px 0;
+    color: #374151;
+}

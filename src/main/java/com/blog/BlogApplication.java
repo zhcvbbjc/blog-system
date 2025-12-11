@@ -2,7 +2,9 @@ package com.blog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 博客系统启动类
@@ -30,5 +32,10 @@ public class BlogApplication {
         System.out.println("📚 API 文档: http://localhost:8080/swagger-ui.html (如果集成了 Swagger)");
         System.out.println("🔧 健康检查: http://localhost:8080/actuator/health");
         System.out.println("==========================================");
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

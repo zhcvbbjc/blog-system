@@ -11,8 +11,8 @@ function ArticleCard({ article }: ArticleCardProps) {
   return (
     <article className={styles.card}>
       <div className={styles.header}>
-        <div>
-          <p className={styles.author}>{article.authorName}</p>
+        <div className={styles.metaRow}>
+          <p className={styles.author}>{article.author?.username}</p>
           <p className={styles.date}>{formatDate(article.createdAt)}</p>
         </div>
         <p className={styles.meta}>
