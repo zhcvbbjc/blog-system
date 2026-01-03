@@ -84,43 +84,81 @@ public class ArticleService {
         return ArticleResponse.fromArticleWithAuthorAndLikeStatus(article, article.getAuthor(), liked);
     }
 
+    /* 创建summary */
+    private String generateSummary(String summaryFromRequest, String content) {
+        // 如果前端传了 summary，优先用
+        if (summaryFromRequest != null && !summaryFromRequest.trim().isEmpty()) {
+            return summaryFromRequest.trim();
+        }
+
+        if (content == null) {
+            return "";
+        }
+
+        // 去掉多余空白
+        String text = content.trim();
+
+        // 截取前 100 个字符
+        if (text.length() <= 100) {
+            return text;
+        }
+
+        return text.substring(0, 100);
+    }
+
     /**
      * 创建文章
      */
     public ArticleResponse createArticle(ArticleRequest request, User author) {
-        // 生成唯一的slug
+
+        // 1. 校验必要字段
+        if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("文章标题不能为空");
+        }
+
+        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
+            throw new IllegalArgumentException("文章内容不能为空");
+        }
+
+        // 2. 生成 slug（已支持中文兜底）
         String slug = slugService.generateSlug(request.getTitle());
 
-        // 创建文章
+        // 3. 生成 summary（取前 100 个字符）
+        String summary = generateSummary(request.getSummary(), request.getContent());
+
+        // 4. 创建文章实体
         Article article = new Article();
         article.setTitle(request.getTitle());
         article.setContent(request.getContent());
-        article.setSummary(request.getSummary());
+        article.setSummary(summary);
         article.setSlug(slug);
         article.setAuthor(author);
 
-        // 处理标签
+        // 5. 处理标签
         if (request.getTags() != null && !request.getTags().isEmpty()) {
             Set<Tag> tags = request.getTags().stream()
-                    .map(tagName -> tagRepository.findByName(tagName)
-                            .orElseGet(() -> {
-                                Tag newTag = Tag.create(tagName);
-                                return tagRepository.save(newTag);
-                            }))
+                    .map(String::trim)
+                    .filter(t -> !t.isEmpty())
+                    .map(tagName ->
+                            tagRepository.findByName(tagName)
+                                    .orElseGet(() -> tagRepository.save(Tag.create(tagName)))
+                    )
                     .collect(Collectors.toSet());
+
             article.setTags(tags);
         }
 
-        // 如果请求发布，则发布文章
+        // 6. 发布状态
         if (Boolean.TRUE.equals(request.getPublish())) {
             article.publish();
         }
 
+        // 7. 保存文章
         Article savedArticle = articleRepository.save(article);
 
-        // 使用AI生成内容
-        if (Boolean.TRUE.equals(request.getGenerateAISummary()) ||
-                Boolean.TRUE.equals(request.getGenerateAITags())) {
+        // 8. AI 自动生成（可选）
+        if (Boolean.TRUE.equals(request.getGenerateAISummary())
+                || Boolean.TRUE.equals(request.getGenerateAITags())) {
             generateAIContent(savedArticle);
         }
 

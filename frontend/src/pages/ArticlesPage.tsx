@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { articleService } from '../services/api';
+import { articleService } from '../services/article';
 import ArticleCard from '../components/articles/ArticleCard';
 import Loading from '../components/common/Loading';
 import ErrorState from '../components/common/ErrorState';

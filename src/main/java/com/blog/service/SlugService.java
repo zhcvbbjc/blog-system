@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service
@@ -20,17 +21,25 @@ public class SlugService {
      * 生成唯一的slug
      */
     public String generateSlug(String title) {
-        String slug = createSlug(title);
-
-        // 确保slug唯一
-        int counter = 1;
-        String uniqueSlug = slug;
-        while (articleRepository.existsBySlug(uniqueSlug)) {
-            uniqueSlug = slug + "-" + counter;
-            counter++;
+        if (title == null || title.trim().isEmpty()) {
+            return UUID.randomUUID().toString().replace("-", "");
         }
 
-        return uniqueSlug;
+        String base = createSlug(title);
+
+        // 如果中文导致 slug 为空
+        if (base.isBlank()) {
+            base = "article";
+        }
+
+        String slug = base;
+        int counter = 1;
+
+        while (articleRepository.existsBySlug(slug)) {
+            slug = base + "-" + counter++;
+        }
+
+        return slug;
     }
 
     /**

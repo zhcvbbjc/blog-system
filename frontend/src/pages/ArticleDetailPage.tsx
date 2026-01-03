@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../components/common/Loading';
 import ErrorState from '../components/common/ErrorState';
-import { articleService } from '../services/api';
+import { articleService } from '../services/article';
 import { formatDate } from '../utils/date';
 import styles from './article-detail.module.css';
 import { marked } from 'marked';

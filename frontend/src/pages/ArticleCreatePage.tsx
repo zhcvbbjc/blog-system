@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { articleService } from '../services/api';
+import { articleService } from '../services/article';
 import styles from './articleCreate.module.css';
 
 function ArticleCreatePage() {

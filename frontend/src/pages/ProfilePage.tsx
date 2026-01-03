@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { authService } from '../services/api';
+import { authService } from '../services/auth';
 import Loading from '../components/common/Loading';
 import ErrorState from '../components/common/ErrorState';
 import styles from './profile.module.css';

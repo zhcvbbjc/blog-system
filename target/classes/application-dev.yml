@@ -44,7 +44,7 @@ spring:
   # Spring AI配置（开发环境）
   ai:
     openai:
-      base-url: https://api.deepseek.com/v1
+      base-url: https://api.deepseek.com
       api-key: ${DEEPSEEK_API_KEY}
       chat:
         options:

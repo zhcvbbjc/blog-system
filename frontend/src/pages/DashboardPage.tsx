@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { articleService, authService } from '../services/api';
+import { articleService } from '../services/article';
+import { authService } from '../services/auth';
 import Loading from '../components/common/Loading';
 import ErrorState from '../components/common/ErrorState';
 import styles from './dashboard.module.css';

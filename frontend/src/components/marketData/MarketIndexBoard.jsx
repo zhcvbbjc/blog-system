@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./marketIndex-board.module.css";
 
 const COUNTRIES = {
@@ -40,8 +40,14 @@ const COUNTRIES = {
 
 function MarketIndexBoard() {
     const [country, setCountry] = useState("china");
-    const [indexSymbol, setIndexSymbol] = useState(COUNTRIES.china.indices[0].symbol);
-    const [indexName, setIndexName] = useState(COUNTRIES.china.indices[0].name);
+    const [indexSymbol, setIndexSymbol] = useState(
+        COUNTRIES.china.indices[0].symbol
+    );
+    const [indexName, setIndexName] = useState(
+        COUNTRIES.china.indices[0].name
+    );
+
+    const chartRef = useRef(null);
 
     const onCountryChange = (key) => {
         setCountry(key);
@@ -54,21 +60,61 @@ function MarketIndexBoard() {
         setIndexName(item.name);
     };
 
+    /** ✅ TradingView 官方方式 1 */
+    useEffect(() => {
+        if (!chartRef.current) return;
+
+        // 清空旧图表
+        chartRef.current.innerHTML = "";
+
+        // 如果 tv.js 还没加载，先加载
+        if (!window.TradingView) {
+            const script = document.createElement("script");
+            script.src = "https://s3.tradingview.com/tv.js";
+            script.async = true;
+
+            script.onload = () => {
+                createWidget();
+            };
+
+            document.body.appendChild(script);
+        } else {
+            createWidget();
+        }
+
+        function createWidget() {
+            new window.TradingView.widget({
+                container_id: chartRef.current.id,
+                symbol: indexSymbol,
+                interval: "D",
+                timezone: "Asia/Shanghai",
+                theme: "light",
+                style: "1",
+                locale: "zh_CN",
+                width: "100%",
+                height: 480,
+                toolbar_bg: "#ffffff",
+                hide_top_toolbar: false,
+                hide_legend: false,
+                enable_publishing: false,
+                allow_symbol_change: false
+            });
+        }
+    }, [indexSymbol]);
+
     return (
         <div className={styles.container} aria-label="market-index-board">
             {/* 国家切换 */}
-            <div className={styles.countryTabs} role="tablist" aria-label="countries">
+            <div className={styles.countryTabs}>
                 {Object.keys(COUNTRIES).map((key) => (
                     <button
                         key={key}
-                        type="button"
                         onClick={() => onCountryChange(key)}
                         className={
                             country === key
                                 ? `${styles.countryTab} ${styles.countryActive}`
                                 : styles.countryTab
                         }
-                        aria-pressed={country === key}
                     >
                         {COUNTRIES[key].name}
                     </button>
@@ -76,18 +122,16 @@ function MarketIndexBoard() {
             </div>
 
             {/* 指数切换 */}
-            <div className={styles.indexTabs} role="tablist" aria-label="indices">
+            <div className={styles.indexTabs}>
                 {COUNTRIES[country].indices.map((item) => (
                     <button
                         key={item.symbol}
-                        type="button"
                         onClick={() => onIndexChange(item)}
                         className={
                             indexSymbol === item.symbol
                                 ? `${styles.indexTab} ${styles.indexActive}`
                                 : styles.indexTab
                         }
-                        aria-pressed={indexSymbol === item.symbol}
                     >
                         {item.name}
                     </button>
@@ -95,54 +139,43 @@ function MarketIndexBoard() {
             </div>
 
             {/* 指标数据 */}
-            <div className={styles.statGrid} aria-hidden="false">
+            <div className={styles.statGrid}>
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>指数</span>
                     <span className={styles.statValue}>{indexName}</span>
                 </div>
-
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>涨跌幅</span>
                     <span className={styles.statValue}>--</span>
                 </div>
-
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>最高</span>
                     <span className={styles.statValue}>--</span>
                 </div>
-
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>最低</span>
                     <span className={styles.statValue}>--</span>
                 </div>
-
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>成交量</span>
                     <span className={styles.statValue}>--</span>
                 </div>
-
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>成交额</span>
                     <span className={styles.statValue}>--</span>
                 </div>
-
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>换手率</span>
                     <span className={styles.statValue}>--</span>
                 </div>
             </div>
 
-            {/* 图表 */}
+            {/* ✅ TradingView 图表容器 */}
             <div className={styles.chartWrapper}>
-                <iframe
-                    title={`tv-${indexSymbol}`}
-                    src={`https://s.tradingview.com/widgetembed/?symbol=${encodeURIComponent(
-                        indexSymbol
-                    )}&interval=D&theme=light&style=1&locale=zh_CN`}
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    scrolling="no"
+                <div
+                    id="tradingview_chart"
+                    ref={chartRef}
+                    style={{ width: "100%", height: "100%" }}
                 />
             </div>
         </div>

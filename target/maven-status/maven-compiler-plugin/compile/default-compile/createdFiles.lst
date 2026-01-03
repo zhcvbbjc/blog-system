@@ -1,2 +1,14 @@
+com\blog\repository\MessageRepository.class
+com\blog\entity\ConversationParticipant.class
+com\blog\dto\request\ChatSendRequest.class
+com\blog\repository\ConversationRepository.class
+com\blog\service\AiClientService.class
 com\blog\controller\tools\MarketController.class
+com\blog\service\AiChatService.class
+com\blog\dto\response\ConversationResponse.class
+com\blog\entity\Conversation.class
+com\blog\repository\ConversationParticipantRepository.class
+com\blog\controller\AiChatController.class
+com\blog\dto\response\MessageResponse.class
+com\blog\entity\Message.class
 com\blog\exception\BlogException$1.class
