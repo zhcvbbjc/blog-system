@@ -1,4 +1,5 @@
 export interface ArticleAuthor {
+    likeCount: number;
     id: number;
     username: string;
     email: string;

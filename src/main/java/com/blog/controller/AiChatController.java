@@ -1,6 +1,8 @@
 package com.blog.controller;
 
 import com.blog.dto.request.ChatSendRequest;
+import com.blog.dto.request.UpdateConversationRequest;
+import com.blog.dto.response.ApiResponse;
 import com.blog.dto.response.ConversationResponse;
 import com.blog.dto.response.MessageResponse;
 import com.blog.entity.Conversation;
@@ -8,6 +10,7 @@ import com.blog.entity.User;
 import com.blog.security.CustomUserDetails;
 import com.blog.service.AiChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +59,25 @@ public class AiChatController {
         );
     }
 
+    @GetMapping("/conversations")
+    public List<ConversationResponse> getConversationResponse(
+            Authentication authentication
+    ) {
+        System.out.println("=== get chat history ===");
+
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        User user = userDetails.toUser();
+
+        List<ConversationResponse> list =
+                aiChatService.listMyAiConversations(user);
+
+        System.out.println("history size = " + list.size());
+
+        return list;
+    }
+
     @PostMapping("/{conversationId}/messages")
     public MessageResponse send(
             @PathVariable Long conversationId,
@@ -93,5 +115,39 @@ public class AiChatController {
         System.out.println("history size = " + list.size());
 
         return list;
+    }
+
+    @DeleteMapping("/{conversationId}")
+    public ResponseEntity<ApiResponse<Void>> deleteConversation(
+            @PathVariable Long conversationId,
+            Authentication authentication) {
+        System.out.println("=== deleteConversation called ===");
+        System.out.println("conversationId = " + conversationId);
+
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        User user = userDetails.toUser();
+        aiChatService.deleteConversation(conversationId, user);
+        System.out.println("删除对话成功");
+        return ResponseEntity.ok(ApiResponse.success("对话删除成功", null));
+    }
+
+    @PatchMapping("/{conversationId}")
+    public ConversationResponse updateConversationTitle(
+            @PathVariable Long conversationId,
+            @RequestBody UpdateConversationRequest request,   // 👈 专门的 DTO
+            Authentication authentication
+    ) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.toUser();
+
+        Conversation updated = aiChatService.modifiedAiConversationTitle(
+                conversationId,
+                user,
+                request.getTitle()  // 👈 明确字段名
+        );
+
+        return ConversationResponse.from(updated);
     }
 }

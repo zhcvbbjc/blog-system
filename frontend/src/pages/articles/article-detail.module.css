@@ -1,0 +1,262 @@
+/* src/pages/articles/article-detail.module.css */
+
+/* 全局页面背景 */
+.pageWrapper {
+    background-color: #fafafa;
+    min-height: 100vh;
+    padding: 3rem 0;
+}
+
+/* 容器 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* 面包屑 */
+.breadcrumb {
+    margin-bottom: 2.5rem;
+    font-size: 0.95rem;
+    color: #64748b;
+}
+
+.breadcrumbLink {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+    text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+    margin: 0 0.5rem;
+}
+
+.breadcrumbCurrent {
+    color: #94a3b8;
+}
+
+/* 文章标题 */
+.title {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 800;
+    color: #1e3a8a;
+    line-height: 1.2;
+    margin: 0 0 1.5rem;
+}
+
+/* 元信息区 */
+.metaSection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.authorInfo {
+    position: relative; /* 👈 关键：让子元素 absolute 相对于它定位 */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.authorName {
+    font-weight: 700;
+    color: #1e40af;
+    font-size: 1.125rem;
+}
+
+.publishTime {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+/* 标签 */
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.tag {
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* 正文内容 */
+.content {
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.8;
+    color: #334155;
+    margin-bottom: 3rem;
+}
+
+.content p {
+    margin: 1.5em 0;
+}
+
+.content h2 {
+    font-size: 1.5rem;
+    margin: 2em 0 1em;
+    color: #1e3a8a;
+    font-weight: 700;
+}
+
+.content h3 {
+    font-size: 1.25rem;
+    margin: 1.75em 0 1em;
+    color: #334155;
+}
+
+.content ul,
+.content ol {
+    margin: 1.5em 0;
+    padding-left: 1.5em;
+}
+
+.content blockquote {
+    border-left: 4px solid #cbd5e1;
+    padding-left: 1.25rem;
+    margin: 1.5em 0;
+    color: #64748b;
+    font-style: italic;
+}
+
+.content code {
+    background: #f1f5f9;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.95em;
+}
+
+.content pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1.25rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5em 0;
+}
+
+.content pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.95em;
+}
+
+.content a {
+    color: #3b82f6;
+    text-decoration: underline;
+}
+
+/* 底部操作栏 */
+.actionBar {
+    display: flex;
+    gap: 1.25rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.actionButton:hover:not(:disabled):not([href]) {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.actionButton.liked {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.actionIcon {
+    font-size: 1.25rem;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .pageWrapper {
+        padding: 2rem 0;
+    }
+
+    .title {
+        font-size: 1.875rem; /* 30px */
+    }
+
+    .metaSection {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .actionBar {
+        flex-wrap: wrap;
+    }
+
+    .actionButton {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+    }
+}
+
+/* 可点击作者名 */
+.clickableAuthor {
+    cursor: pointer;
+    color: #1890ff;
+    text-decoration: underline;
+}
+
+/*.userCardOverlay {*/
+/*    position: absolute;        !* 👈 绝对定位 *!*/
+/*    top: 100%;                 !* 在作者名下方 *!*/
+/*    left: 0;                   !* 左对齐作者名 *!*/
+/*    z-index: 1000;*/
+/*    margin-top: 8px;           !* 小间距 *!*/
+/*    transform: translateX(0);  !* 可选：微调 *!*/
+/*}*/
+
+/* 如果你想让它居中于作者名下方 */
+
+.userCardOverlay {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  z-index: 1000;
+}
+
+
+/* 卡片本身（由 UserInfoCard 控制）建议加个阴影和圆角 */
+.userCardOverlay > div {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    background: white;
+    min-width: 240px;
+}

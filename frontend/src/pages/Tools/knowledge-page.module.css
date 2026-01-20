@@ -1,122 +1,311 @@
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+/* knowledge-page.module.css */
+.page {
+    /* 更宽的容器：1400px 是现代金融/数据网站常见宽度 */
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2.5rem 2.5rem; /* 左右留白适度，不挤压也不空旷 */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #111827;
+    background-color: #ffffff;
+    line-height: 1.6;
 }
 
-/* ===== 第一部分：标题 + 搜索框 ===== */
-.header {
+/* 通用区块间距 */
+.section {
+    margin-bottom: 3.5rem;
+}
+
+.section > h2 {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: #1e3a8a;
+}
+
+.sectionDesc {
+    font-size: 1.125rem;
+    color: #4b5563;
+    margin-bottom: 2rem;
+    max-width: 800px; /* 描述文字不宜过宽 */
+}
+
+/* === 每日知识卡片 === */
+.dailyCard {
+    background-color: #f8fafc;
+    border-left: 4px solid #3b82f6;
+    padding: 2rem;
+    border-radius: 0 12px 12px 0;
+    max-width: none; /* 不限制宽度 */
+}
+
+.dailyCard .badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+}
+
+.dailyCard h1 {
+    font-size: 1.75rem;
+    margin: 0 0 1rem;
+    color: #1e40af;
+}
+
+.dailyCard p {
+    margin: 0 0 1.5rem;
+    color: #374151;
+    font-size: 1.125rem;
+    max-width: 900px;
+}
+
+.linkButton {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1.125rem;
+}
+
+.linkButton:hover {
+    text-decoration: underline;
+}
+
+/* === AI 入口 === */
+/* === 醒目 AI 入口区域 === */
+.aiSection {
+    margin-bottom: 3.5rem;
+}
+
+.aiContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.header h1 {
-    font-size: 2rem;
-}
-
-.searchInput {
-    padding: 0.5rem 1rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    width: 250px;
-}
-
-/* ===== 第二部分 ===== */
-.middle {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
     gap: 2rem;
+    padding: 2rem 2.5rem;
+    background: linear-gradient(135deg, #f0f9ff, #e6f4ff);
+    border: 1px solid #bae6fd;
+    border-radius: 16px;
+    max-width: none;
 }
 
-/* 左侧 */
-.left {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.aiTitle {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: #0c4a6e;
 }
 
-.smallCard {
-    background: #f0f9ff;
-    padding: 1rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+.aiSubtitle {
+    font-size: 1.125rem;
+    color: #374151;
+    margin: 0;
+    max-width: 500px;
 }
 
-.smallCard h3 {
-    margin: 0 0 0.5rem 0;
+.aiButton {
+    background: #1d4ed8; /* 深蓝色，更稳重 */
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 0.875rem 2.25rem;
+    border-radius: 12px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+    min-width: 220px;
+    text-align: center;
+    justify-content: center;
 }
 
+.aiButton:hover {
+    background: #1e40af;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(29, 78, 216, 0.35);
+}
+
+/* 响应式：小屏堆叠 */
+/* 响应式：小屏堆叠 */
+@media (max-width: 900px) {
+    .aiContainer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .aiSubtitle {
+        margin-top: 0.5rem;
+    }
+}
+
+/* === 四大模块：宽屏 4 列 === */
 .moduleGrid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.75rem;
 }
 
 .moduleCard {
-    background: #e0f2fe;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    text-align: center;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s;
+    display: block;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    background: #fafcff;
 }
 
 .moduleCard:hover {
-    transform: translateY(-4px);
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
 }
 
-/* 右侧：书籍 */
-.right h3 {
+.moduleIcon {
+    font-size: 2rem;
     margin-bottom: 1rem;
+    display: block;
 }
 
-.booksGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+.moduleCard h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    color: #1e40af;
+}
+
+.moduleCard p {
+    margin: 0;
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* === 书籍区域：3×2 网格 === */
+.booksHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
     gap: 1rem;
+}
+
+.bookshelfLink {
+    color: #4f46e5;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1.125rem;
+}
+
+.bookGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
 }
 
 .bookCard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: left;
 }
 
-.bookCard img {
+.bookCover {
     width: 100%;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
+    aspect-ratio: 3 / 4;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
 }
 
-/* 第三部分：视频 */
-.videosSection h3 {
+.bookCard h4 {
+    font-size: 1.125rem;
+    margin: 0 0 0.5rem;
+    color: #1e3a8a;
+    font-weight: 600;
+}
+
+.bookAuthor {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
+}
+
+.bookDesc {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* === 视频区域：3 列 === */
+.videoGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.videoCard {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.videoThumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #f8fafc;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 2rem;
+    font-weight: bold;
     margin-bottom: 1rem;
 }
 
-.videoGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-}
-
-.videoCard iframe {
-    width: 100%;
-    height: 140px;
-    border-radius: 0.5rem;
+.videoCard h3 {
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem;
+    color: #1e40af;
 }
 
 .videoCard p {
-    margin-top: 0.25rem;
-    font-size: 0.9rem;
-    text-align: center;
+    color: #64748b;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* 响应式：平板及以下调整列数 */
+@media (max-width: 1100px) {
+    .moduleGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .bookGrid,
+    .videoGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page {
+        padding: 1.5rem;
+    }
+    .moduleGrid,
+    .bookGrid,
+    .videoGrid {
+        grid-template-columns: 1fr;
+    }
+    .booksHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

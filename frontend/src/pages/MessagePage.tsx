@@ -5,6 +5,8 @@ import {
     sendAiMessage,
     getAiMessages,
     getAiConversations,
+    updateConversationTitle,   // 👈 新增
+    deleteConversation,        // 👈 新增
 } from "../services/ai";
 import { AxiosResponse } from "axios";
 
@@ -69,14 +71,9 @@ const MessagePage: React.FC = () => {
             const res: AxiosResponse<ApiConversation[]> =
                 await getAiConversations();
 
-            console.log("加载的会话列表响应:", res.data);
-
             const list = res.data.map(mapConversation);
-            console.log("转换后的列表:", list);
-
             setConversations(list);
 
-            // 如果有会话，设置第一个为活跃会话
             if (list.length > 0) {
                 setActiveConversation(list[0]);
                 loadMessages(list[0].id);
@@ -95,7 +92,6 @@ const MessagePage: React.FC = () => {
     const loadMessages = async (conversationId: number) => {
         try {
             const res: AxiosResponse<ApiMessage[]> = await getAiMessages(conversationId);
-
             setMessagesMap((prev) => ({
                 ...prev,
                 [conversationId]: res.data,
@@ -108,40 +104,23 @@ const MessagePage: React.FC = () => {
     /** 新建 AI 会话 */
     const handleCreateAi = async () => {
         if (sending) return;
-
         setSending(true);
 
         try {
-            console.log("开始创建 AI 会话...");
-
-            const res: AxiosResponse<ApiConversation> =
-                await createAiConversation();
-
-            console.log("API 响应:", res.data);
-
+            const res: AxiosResponse<ApiConversation> = await createAiConversation();
             const conv = mapConversation(res.data);
-            console.log("转换后的会话:", conv);
 
-            // 使用函数式更新确保状态正确
-            setConversations(prev => {
-                // 检查是否已存在相同 ID 的会话
+            setConversations((prev) => {
                 const exists = prev.some(c => c.id === conv.id);
-                if (exists) {
-                    console.warn("会话已存在:", conv.id);
-                    return prev;
-                }
+                if (exists) return prev;
                 return [conv, ...prev];
             });
 
-            // 设置活跃会话
             setActiveConversation(conv);
-
-            // 初始化消息数组
-            setMessagesMap(prev => ({
+            setMessagesMap((prev) => ({
                 ...prev,
-                [conv.id]: []
+                [conv.id]: [],
             }));
-
         } catch (error) {
             console.error("创建 AI 会话失败:", error);
             alert("创建会话失败，请稍后重试");
@@ -155,7 +134,6 @@ const MessagePage: React.FC = () => {
         if (!input.trim() || !activeConversation || sending) return;
 
         setSending(true);
-
         const userMsg: Message = {
             id: Date.now(),
             senderType: "USER",
@@ -164,19 +142,14 @@ const MessagePage: React.FC = () => {
 
         setMessagesMap((prev) => ({
             ...prev,
-            [activeConversation.id]: [
-                ...(prev[activeConversation.id] || []),
-                userMsg,
-            ],
+            [activeConversation.id]: [...(prev[activeConversation.id] || []), userMsg],
         }));
 
         const content = input.trim();
         setInput("");
 
         try {
-            const res: AxiosResponse<ApiMessage> =
-                await sendAiMessage(activeConversation.id, content);
-
+            const res: AxiosResponse<ApiMessage> = await sendAiMessage(activeConversation.id, content);
             const ai = res.data;
 
             setMessagesMap((prev) => ({
@@ -208,23 +181,71 @@ const MessagePage: React.FC = () => {
         }
     };
 
+    /** 修改会话标题 */
+    const handleUpdateTitle = async (conversation: Conversation) => {
+        const newTitle = prompt("请输入新标题", conversation.title);
+        if (!newTitle || newTitle.trim() === "" || newTitle.trim() === conversation.title) {
+            return;
+        }
+
+        try {
+            await updateConversationTitle(conversation.id, newTitle.trim());
+            // 更新本地状态
+            setConversations(prev =>
+                prev.map(c => c.id === conversation.id ? { ...c, title: newTitle.trim() } : c)
+            );
+            // 如果是当前激活的会话，也更新它
+            if (activeConversation?.id === conversation.id) {
+                setActiveConversation({ ...activeConversation, title: newTitle.trim() });
+            }
+        } catch (error) {
+            console.error("修改标题失败:", error);
+            alert("修改标题失败，请稍后重试");
+        }
+    };
+
+    /** 删除会话 */
+    const handleDeleteConversation = async (conversationId: number) => {
+        if (conversations.length <= 1) {
+            alert("至少保留一个会话");
+            return;
+        }
+
+        if (!confirm("确定要删除这个会话吗？")) {
+            return;
+        }
+
+        try {
+            await deleteConversation(conversationId);
+
+            // 从列表中移除
+            const updated = conversations.filter(c => c.id !== conversationId);
+            setConversations(updated);
+
+            // 如果删除的是当前激活的会话，切换到第一个
+            if (activeConversation?.id === conversationId) {
+                const newActive = updated[0];
+                if (newActive) {
+                    setActiveConversation(newActive);
+                    loadMessages(newActive.id);
+                } else {
+                    setActiveConversation(null);
+                }
+            }
+        } catch (error) {
+            console.error("删除会话失败:", error);
+            alert("删除失败，请稍后重试");
+        }
+    };
+
     useEffect(() => {
         messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messagesMap, activeConversation]);
 
     return (
         <div className={styles.pageRoot}>
-            {/* 临时调试区域 - 上线前删除 */}
-            <div style={{
-                position: 'fixed',
-                top: 0,
-                right: 0,
-                background: 'rgba(0,0,0,0.8)',
-                color: 'white',
-                padding: '10px',
-                zIndex: 9999,
-                fontSize: '12px'
-            }}>
+            {/* 调试面板（上线前可删除） */}
+            <div className={styles.debugPanel}>
                 <div>会话数: {conversations.length}</div>
                 <div>活跃会话ID: {activeConversation?.id || '无'}</div>
                 <div>最新会话: {conversations[0]?.title || '无'}</div>
@@ -235,15 +256,13 @@ const MessagePage: React.FC = () => {
                 <aside className={styles.sidebar}>
                     <div className={styles.sidebarHeader}>
                         <h3>消息</h3>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <button
-                                className={styles.newChatBtn}
-                                onClick={handleCreateAi}
-                                disabled={sending || loading}
-                            >
-                                {sending ? "创建中..." : "＋ 新建 AI"}
-                            </button>
-                        </div>
+                        <button
+                            className={styles.newChatBtn}
+                            onClick={handleCreateAi}
+                            disabled={sending || loading}
+                        >
+                            {sending ? "创建中..." : "＋ 新建 AI"}
+                        </button>
                     </div>
 
                     <div className={styles.conversationList}>
@@ -256,19 +275,44 @@ const MessagePage: React.FC = () => {
                                 <div
                                     key={c.id}
                                     className={`${styles.conversationItem} ${
-                                        activeConversation?.id === c.id
-                                            ? styles.active
-                                            : ""
+                                        activeConversation?.id === c.id ? styles.active : ""
                                     }`}
-                                    onClick={() => {
-                                        setActiveConversation(c);
-                                        loadMessages(c.id);
-                                    }}
                                 >
-                                    <span className={styles.icon}>🤖</span>
-                                    <span className={styles.title}>
-                                        {c.title}
-                                    </span>
+                                    {/* 左侧：点击切换会话 */}
+                                    <div
+                                        className={styles.conversationContent}
+                                        onClick={() => {
+                                            setActiveConversation(c);
+                                            loadMessages(c.id);
+                                        }}
+                                    >
+                                        <span className={styles.icon}>🤖</span>
+                                        <span className={styles.title}>{c.title}</span>
+                                    </div>
+
+                                    {/* 右侧：操作按钮 */}
+                                    <div className={styles.conversationActions}>
+                                        <button
+                                            className={styles.actionBtn}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleUpdateTitle(c);
+                                            }}
+                                            title="修改标题"
+                                        >
+                                            ✏️
+                                        </button>
+                                        <button
+                                            className={styles.actionBtn}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteConversation(c.id);
+                                            }}
+                                            title="删除会话"
+                                        >
+                                            🗑️
+                                        </button>
+                                    </div>
                                 </div>
                             ))
                         )}
@@ -285,37 +329,28 @@ const MessagePage: React.FC = () => {
                             </div>
 
                             <div className={styles.messageList}>
-                                {(messagesMap[activeConversation.id] || []).map(
-                                    (msg) => (
-                                        <div
-                                            key={msg.id}
-                                            className={`${styles.messageItem} ${
-                                                msg.senderType === "USER"
-                                                    ? styles.fromUser
-                                                    : styles.fromAI
-                                            }`}
-                                        >
-                                            <div className={styles.bubble}>
-                                                {msg.content}
-                                            </div>
-                                        </div>
-                                    )
-                                )}
+                                {(messagesMap[activeConversation.id] || []).map((msg) => (
+                                    <div
+                                        key={msg.id}
+                                        className={`${styles.messageItem} ${
+                                            msg.senderType === "USER"
+                                                ? styles.fromUser
+                                                : styles.fromAI
+                                        }`}
+                                    >
+                                        <div className={styles.bubble}>{msg.content}</div>
+                                    </div>
+                                ))}
                                 <div ref={messageEndRef} />
                             </div>
 
                             <div className={styles.inputBox}>
                                 <textarea
                                     value={input}
-                                    onChange={(e) =>
-                                        setInput(e.target.value)
-                                    }
+                                    onChange={(e) => setInput(e.target.value)}
                                     placeholder="向 AI 提问..."
                                     onKeyDown={(e) => {
-                                        if (
-                                            e.key === "Enter" &&
-                                            !e.shiftKey
-                                        ) {
+                                        if (e.key === "Enter" && !e.shiftKey) {
                                             e.preventDefault();
                                             handleSend();
                                         }

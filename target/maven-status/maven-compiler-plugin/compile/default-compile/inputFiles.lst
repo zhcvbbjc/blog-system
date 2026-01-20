@@ -43,6 +43,7 @@ D:\blog-system\src\main\java\com\blog\config\OpenAIConfig.java
 D:\blog-system\src\main\java\com\blog\dto\request\RegisterRequest.java
 D:\blog-system\src\main\java\com\blog\util\DateUtil.java
 D:\blog-system\src\main\java\com\blog\controller\AiChatController.java
+D:\blog-system\src\main\java\com\blog\dto\request\UpdateConversationRequest.java
 D:\blog-system\src\main\java\com\blog\dto\response\ApiResponse.java
 D:\blog-system\src\main\java\com\blog\dto\request\ChatSendRequest.java
 D:\blog-system\src\main\java\com\blog\repository\TagRepository.java

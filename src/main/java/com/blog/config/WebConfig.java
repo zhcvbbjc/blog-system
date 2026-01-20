@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:8080",
                         "http://127.0.0.1:8080"
                 )
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
                 .maxAge(3600);  // 预检请求缓存时间（秒）

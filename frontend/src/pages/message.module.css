@@ -1,21 +1,41 @@
-/* 整体容器，占满 main 区域高度 */
-.container {
-    flex: 1;                 /* 让它吃掉 main 剩余空间 */
+/* 确保 pageRoot 占满整个视口，且不依赖外部布局 */
+.pageRoot {
     display: flex;
-    min-height: 0;           /* 防止 flex 溢出 */
+    flex-direction: column;
+    height: 76vh; /* 👈 核心：占满视口高度 */
+    background: #f5f7fb;
+    position: relative;
+}
+
+/* 调试面板（上线前删除） */
+.debugPanel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    z-index: 9999;
+    font-size: 12px;
+}
+
+/* 主容器：横向 flex，左右等高 */
+.container {
+    flex: 1;
+    display: flex;
+    min-height: 0; /* 防止子元素撑开容器 */
     background: #f5f7fb;
     border-radius: 12px;
     overflow: hidden;
 }
 
 /* ================= 左侧会话栏 ================= */
-
 .sidebar {
     width: 260px;
-    background: #ffffff;
-    border-right: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
 }
 
 .sidebarHeader {
@@ -29,6 +49,7 @@
 .sidebarHeader h3 {
     font-size: 16px;
     font-weight: 600;
+    margin: 0;
 }
 
 .newChatBtn {
@@ -41,22 +62,25 @@
     color: #fff;
 }
 
-.newChatBtn:hover {
+.newChatBtn:hover:not(:disabled) {
     background: #1d4ed8;
 }
 
 .conversationList {
     flex: 1;
     overflow-y: auto;
+    padding: 4px 0;
 }
 
+/* 会话项整体容器 */
 .conversationItem {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
     padding: 12px 14px;
     cursor: pointer;
     transition: background 0.2s;
+    position: relative;
 }
 
 .conversationItem:hover {
@@ -65,6 +89,15 @@
 
 .active {
     background: #e0e7ff;
+}
+
+/* 左侧：图标 + 标题 */
+.conversationContent {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
 }
 
 .icon {
@@ -79,17 +112,60 @@
     text-overflow: ellipsis;
 }
 
-/* ================= 右侧聊天区 ================= */
+/* 右侧：操作按钮区域 */
+.conversationActions {
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    flex-shrink: 0;
+}
 
+.conversationItem:hover .conversationActions {
+    opacity: 1;
+}
+
+.actionBtn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #6b7280;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.actionBtn:hover {
+    background-color: #e5e7eb;
+    color: #1f2937;
+}
+
+.active .actionBtn:hover {
+    background-color: #d1d5db;
+}
+
+.loading,
+.emptyList {
+    padding: 16px;
+    color: #9ca3af;
+    text-align: center;
+}
+
+/* ================= 右侧聊天区 ================= */
 .chatPanel {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 0;   /* ✅ 很关键，防止 messageList 撑坏布局 */
+    min-height: 0;
     background: #f9fafb;
 }
 
-/* 顶部标题栏 */
 .chatHeader {
     padding: 14px 18px;
     border-bottom: 1px solid #e5e7eb;
@@ -99,15 +175,9 @@
 .chatHeader h3 {
     font-size: 16px;
     font-weight: 600;
+    margin: 0;
 }
 
-.chatType {
-    color: #6b7280;
-    font-size: 13px;
-    margin-left: 6px;
-}
-
-/* 消息列表 */
 .messageList {
     flex: 1;
     padding: 16px;
@@ -117,23 +187,19 @@
     gap: 12px;
 }
 
-/* 单条消息 */
 .messageItem {
     display: flex;
     max-width: 100%;
 }
 
-/* 用户消息靠右 */
 .fromUser {
     justify-content: flex-end;
 }
 
-/* AI / 对方靠左 */
 .fromAI {
     justify-content: flex-start;
 }
 
-/* 气泡 */
 .bubble {
     max-width: 70%;
     padding: 10px 14px;
@@ -144,21 +210,18 @@
     white-space: pre-wrap;
 }
 
-/* 用户气泡 */
 .fromUser .bubble {
     background: #2563eb;
     color: #ffffff;
     border-bottom-right-radius: 4px;
 }
 
-/* AI / 对方气泡 */
 .fromAI .bubble {
     background: #e5e7eb;
     color: #111827;
     border-bottom-left-radius: 4px;
 }
 
-/* 输入区 */
 .inputBox {
     border-top: 1px solid #e5e7eb;
     padding: 12px;
@@ -196,23 +259,12 @@
     white-space: nowrap;
 }
 
-.inputBox button:hover {
+.inputBox button:hover:not(:disabled) {
     background: #1d4ed8;
 }
 
-/* 空状态 */
 .empty {
     margin: auto;
     color: #9ca3af;
     font-size: 14px;
 }
-
-.pageRoot {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
-    /* 抵消 layout.main 的 padding-bottom */
-    margin-bottom: -1.5rem;
-}
-

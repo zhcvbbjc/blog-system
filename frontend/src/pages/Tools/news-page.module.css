@@ -1,0 +1,103 @@
+.page {
+    width: 100%;
+    min-height: 100%;
+    padding: 24px 32px;
+    box-sizing: border-box;
+}
+
+/* 头部 */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+/* 搜索图标（占位） */
+.searchBox {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: not-allowed;
+    font-size: 18px;
+}
+
+.searchBox:hover {
+    background: #e5e7eb;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* 新闻列表 */
+.newsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.newsItem {
+    padding: 16px 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.newsItem:last-child {
+    border-bottom: none;
+}
+
+.title {
+    font-size: 1rem;
+    color: #111827;
+    flex: 1;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.date {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    white-space: nowrap;
+    margin-left: 16px;
+}
+
+/* 加载 */
+.loading {
+    text-align: center;
+    color: #6b7280;
+    padding: 40px 0;
+}
+
+/* 分页 */
+.pagination {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+.pagination button {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: white;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}

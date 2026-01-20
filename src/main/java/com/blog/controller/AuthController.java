@@ -160,4 +160,29 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiResponse.success("注销成功", null));
     }
+
+    /**
+     * 根据用户名查询公开用户信息（含统计）
+     */
+    @GetMapping("/search-user/{username}")
+    public ResponseEntity<ApiResponse<UserResponse>> getUserByUsername(@PathVariable String username) {
+        // 1. 查用户
+        User user = userService.getUserByUsername(username);
+
+        // 2. 获取统计
+        UserService.UserStats stats = userService.getUserStats(user.getId());
+
+        // 3. 构建带统计的响应（使用你已有的方法！）
+        UserResponse response = UserResponse.fromUserWithStats(
+                user,
+                stats.articleCount,
+                stats.likeCount,
+                stats.commentCount
+        );
+
+        // 4. 隐藏敏感字段（安全！）
+        response.setEmail(null); // 公开接口不返回邮箱
+
+        return ResponseEntity.ok(ApiResponse.success("查询成功", response));
+    }
 }

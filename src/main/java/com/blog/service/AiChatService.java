@@ -1,16 +1,20 @@
 package com.blog.service;
 
+import com.blog.dto.response.ApiResponse;
 import com.blog.dto.response.ConversationResponse;
 import com.blog.dto.response.MessageResponse;
 import com.blog.entity.Conversation;
 import com.blog.entity.ConversationParticipant;
 import com.blog.entity.Message;
 import com.blog.entity.User;
+import com.blog.exception.BlogException;
 import com.blog.repository.ConversationParticipantRepository;
 import com.blog.repository.ConversationRepository;
 import com.blog.repository.MessageRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -76,6 +80,64 @@ public class AiChatService {
                         c.getUpdatedAt()
                 ))
                 .toList();
+    }
+
+    /**
+     * 删除会话（左侧栏用）
+     */
+    public void deleteConversation(Long conversationId, User user) {
+        Conversation conversation = conversationRepository
+                .findById(conversationId)
+                .orElseThrow(() -> new BlogException("对话不存在", HttpStatus.NOT_FOUND));
+
+        // 查询该用户拥有的 AI 会话
+        List<Conversation> ownerConversations =
+                conversationRepository.findAiConversationsByOwnerUserId(user.getId());
+
+        // 提取 ID 列表
+        List<Long> ownerConversationIds = ownerConversations.stream()
+                .map(Conversation::getId)
+                .toList();
+
+        // 权限校验
+        if (!ownerConversationIds.contains(conversationId)) {
+            throw new BlogException("没有权限删除此对话", HttpStatus.FORBIDDEN);
+        }
+
+        // 删除会话
+        conversation.setIsDeleted(true);
+        conversationRepository.save(conversation);
+    }
+
+    /**
+     * 修改会话标题
+     **/
+    public Conversation modifiedAiConversationTitle(Long conversationId, User user, String title) {
+        Conversation conversation = conversationRepository
+                .findById(conversationId)
+                .orElseThrow(() -> new BlogException("对话不存在", HttpStatus.NOT_FOUND));
+
+        // 查询该用户拥有的 AI 会话
+        List<Conversation> ownerConversations =
+                conversationRepository.findAiConversationsByOwnerUserId(user.getId());
+
+        // 提取 ID 列表
+        List<Long> ownerConversationIds = ownerConversations.stream()
+                .map(Conversation::getId)
+                .toList();
+
+        // 权限校验
+        if (!ownerConversationIds.contains(conversationId)) {
+            throw new BlogException("没有权限修改此对话", HttpStatus.FORBIDDEN);
+        }
+
+        // 标题合法性校验（可选）
+        if (title == null || title.trim().isEmpty() || title.length() > 100) {
+            throw new BlogException("标题无效", HttpStatus.BAD_REQUEST);
+        }
+
+        conversation.setTitle(title.trim());
+        return conversationRepository.save(conversation);
     }
 
     /**

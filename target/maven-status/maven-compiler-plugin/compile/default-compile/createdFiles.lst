@@ -9,6 +9,7 @@ com\blog\dto\response\ConversationResponse.class
 com\blog\entity\Conversation.class
 com\blog\repository\ConversationParticipantRepository.class
 com\blog\controller\AiChatController.class
+com\blog\dto\request\UpdateConversationRequest.class
 com\blog\dto\response\MessageResponse.class
 com\blog\entity\Message.class
 com\blog\exception\BlogException$1.class

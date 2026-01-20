@@ -4,14 +4,18 @@ import com.blog.dto.request.CommentRequest;
 import com.blog.dto.response.ApiResponse;
 import com.blog.dto.response.CommentResponse;
 import com.blog.entity.User;
+import com.blog.exception.BlogException;
 import com.blog.security.CustomUserDetails;
 import com.blog.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -20,6 +24,8 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
+
+    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 获取文章的评论列表
@@ -41,6 +47,13 @@ public class CommentController {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User user = userDetails.toUser();
+
+        // 🔥 Redis 限流：用户每 10 秒只能评论 1 次
+        String redisKey = "comment:limit:user:" + user.getId();
+        Boolean isAllowed = redisTemplate.opsForValue().setIfAbsent(redisKey, "1", Duration.ofSeconds(10));
+        if (Boolean.FALSE.equals(isAllowed)) {
+            throw new BlogException("评论过于频繁，请稍后再试", HttpStatus.TOO_MANY_REQUESTS);
+        }
 
         CommentResponse comment = commentService.createComment(articleId, request, user);
 
